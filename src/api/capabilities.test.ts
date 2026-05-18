@@ -1,0 +1,104 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { ApiError } from './types'
+import { fetchCapabilities } from './capabilities'
+import type { Connection } from './types'
+
+const baseConnection: Connection = {
+  id: 'conn-1',
+  url: 'http://localhost:3000',
+  createdAt: '2026-05-13T00:00:00Z',
+}
+
+describe('fetchCapabilities', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn())
+  })
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
+  })
+
+  it('hits {url}/trajectory/v1/capabilities with Accept JSON', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ data: [], meta: { total: 0 } }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    )
+    await fetchCapabilities(baseConnection)
+    expect(fetch).toHaveBeenCalledWith(
+      'http://localhost:3000/trajectory/v1/capabilities',
+      expect.objectContaining({ headers: expect.objectContaining({ Accept: 'application/json' }) })
+    )
+  })
+
+  it('strips a trailing slash from the connection URL', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ data: [], meta: { total: 0 } }), { status: 200 })
+    )
+    await fetchCapabilities({ ...baseConnection, url: 'http://localhost:3000/' })
+    expect(fetch).toHaveBeenCalledWith(
+      'http://localhost:3000/trajectory/v1/capabilities',
+      expect.anything()
+    )
+  })
+
+  it('adds Authorization: Bearer when apiKey is present', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ data: [], meta: { total: 0 } }), { status: 200 })
+    )
+    await fetchCapabilities({ ...baseConnection, apiKey: 'secret-token' })
+    expect(fetch).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: 'Bearer secret-token' }),
+      })
+    )
+  })
+
+  it('returns the parsed body on 200', async () => {
+    const body = {
+      data: [
+        {
+          action_oid: 'act-1',
+          environment_oid: 'env-1',
+          local_id: 'PickItem',
+          version: '1.0.0',
+          visibility: 'observable',
+          input_parameters: [],
+          output_parameters: [],
+          supported_commands: ['PAUSE'],
+        },
+      ],
+      meta: { total: 1 },
+    }
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify(body), { status: 200 })
+    )
+    const result = await fetchCapabilities(baseConnection)
+    expect(result).toEqual(body)
+  })
+
+  it('throws ApiError on non-2xx', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response('Internal Server Error', { status: 500, statusText: 'Internal Server Error' })
+    )
+    await expect(fetchCapabilities(baseConnection)).rejects.toBeInstanceOf(ApiError)
+  })
+
+  it('exposes status, statusText, and body on ApiError', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response('not found body', { status: 404, statusText: 'Not Found' })
+    )
+    try {
+      await fetchCapabilities(baseConnection)
+      throw new Error('expected to throw')
+    } catch (err) {
+      expect(err).toBeInstanceOf(ApiError)
+      const apiErr = err as ApiError
+      expect(apiErr.status).toBe(404)
+      expect(apiErr.statusText).toBe('Not Found')
+      expect(apiErr.body).toContain('not found body')
+    }
+  })
+})

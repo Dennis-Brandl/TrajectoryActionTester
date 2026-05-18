@@ -1,0 +1,47 @@
+import { useState, type ReactNode } from 'react'
+import { ActionTree } from './ActionTree'
+import { ConnectionList } from './ConnectionList'
+import { InstanceList } from './InstanceList'
+import styles from './Sidebar.module.css'
+
+interface SectionProps {
+  title: string
+  defaultOpen?: boolean
+  children: ReactNode
+}
+
+function Section({ title, defaultOpen = true, children }: SectionProps) {
+  const [open, setOpen] = useState(defaultOpen)
+  return (
+    <section className={styles.section}>
+      <button
+        type="button"
+        className={styles.header}
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+      >
+        <span className={styles.caret} aria-hidden>
+          {open ? '▾' : '▸'}
+        </span>
+        <span className={styles.title}>{title}</span>
+      </button>
+      {open && <div className={styles.body}>{children}</div>}
+    </section>
+  )
+}
+
+export function Sidebar() {
+  return (
+    <nav className={styles.sidebar} aria-label="Sidebar">
+      <Section title="Connections">
+        <ConnectionList />
+      </Section>
+      <Section title="Actions">
+        <ActionTree />
+      </Section>
+      <Section title="Instances">
+        <InstanceList />
+      </Section>
+    </nav>
+  )
+}

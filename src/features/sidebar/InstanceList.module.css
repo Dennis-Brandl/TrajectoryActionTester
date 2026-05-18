@@ -1,0 +1,44 @@
+.message {
+  font-size: var(--acT-fs-sm);
+  color: var(--acT-text-muted);
+  padding: var(--acT-pad-sm);
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--acT-pad-sm);
+  width: 100%;
+  background: transparent;
+  border: 0;
+  color: var(--acT-text);
+  text-align: left;
+  cursor: pointer;
+  padding: var(--acT-pad-sm) var(--acT-pad);
+  font: inherit;
+  border-radius: var(--acT-radius);
+}
+
+.row:hover {
+  background: var(--acT-panel-alt);
+}
+
+.rowActive {
+  background: var(--acT-accent-bg);
+}
+
+.id {
+  font-size: var(--acT-fs-base);
+  font-family: var(--acT-mono);
+  color: var(--acT-text);
+}

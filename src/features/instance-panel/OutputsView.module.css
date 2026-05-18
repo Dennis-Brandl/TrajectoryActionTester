@@ -1,0 +1,32 @@
+.list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: contents;
+}
+
+.key {
+  font-weight: 500;
+  color: var(--acT-text-muted);
+  font-family: var(--acT-mono);
+  font-size: var(--acT-fs-sm);
+}
+
+.value {
+  margin: 0;
+  font-family: var(--acT-mono);
+  font-size: var(--acT-fs-sm);
+  word-break: break-all;
+  color: var(--acT-text);
+}
+
+.empty {
+  color: var(--acT-text-muted);
+  font-style: italic;
+  margin: 0;
+}

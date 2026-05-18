@@ -1,0 +1,17 @@
+.bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.error {
+  margin: 0;
+  color: var(--acT-error);
+  font-size: var(--acT-fs-sm);
+}

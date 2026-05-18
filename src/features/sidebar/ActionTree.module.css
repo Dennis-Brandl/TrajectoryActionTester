@@ -1,0 +1,70 @@
+.tree {
+  display: flex;
+  flex-direction: column;
+  gap: var(--acT-pad-sm);
+}
+
+.message {
+  font-size: var(--acT-fs-sm);
+  color: var(--acT-text-muted);
+  padding: var(--acT-pad-sm);
+}
+
+.error {
+  font-size: var(--acT-fs-sm);
+  color: var(--acT-error);
+  padding: var(--acT-pad-sm);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+}
+
+.groupHeader {
+  font-size: var(--acT-fs-sm);
+  font-weight: 600;
+  color: var(--acT-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px var(--acT-pad-sm);
+  margin: 0;
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--acT-pad-sm);
+  width: 100%;
+  background: transparent;
+  border: 0;
+  color: var(--acT-text);
+  text-align: left;
+  cursor: pointer;
+  padding: var(--acT-pad-sm) var(--acT-pad);
+  font: inherit;
+  border-radius: var(--acT-radius);
+}
+
+.row:hover {
+  background: var(--acT-panel-alt);
+}
+
+.rowActive {
+  background: var(--acT-accent-bg);
+}
+
+.label {
+  font-size: var(--acT-fs-base);
+  font-weight: 500;
+}

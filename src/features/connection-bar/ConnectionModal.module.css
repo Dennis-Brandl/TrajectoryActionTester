@@ -1,0 +1,19 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--acT-pad);
+}
+
+.title {
+  font-size: var(--acT-fs-md);
+  font-weight: 600;
+  color: var(--acT-text);
+  margin-bottom: 4px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--acT-pad-sm);
+  margin-top: var(--acT-pad);
+}

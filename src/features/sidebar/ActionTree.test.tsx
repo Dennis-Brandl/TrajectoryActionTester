@@ -1,0 +1,111 @@
+import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { renderWithProviders } from '../../test-utils'
+import { ActionTree } from './ActionTree'
+
+beforeEach(() => {
+  localStorage.clear()
+  vi.stubGlobal('fetch', vi.fn())
+})
+afterEach(() => {
+  localStorage.clear()
+  vi.unstubAllGlobals()
+  vi.restoreAllMocks()
+})
+
+function seedConnection() {
+  localStorage.setItem(
+    'acT:connections:v1',
+    JSON.stringify({
+      connections: [
+        { id: 'c1', url: 'http://localhost:3000', createdAt: '2026-05-13T00:00:00Z' },
+      ],
+      activeConnectionId: 'c1',
+    })
+  )
+}
+
+const sampleCapabilities = {
+  data: [
+    {
+      action_oid: 'act-pick',
+      environment_oid: 'env-1',
+      local_id: 'PickItem',
+      version: '1.0.0',
+      visibility: 'observable',
+      input_parameters: [],
+      output_parameters: [],
+      supported_commands: ['PAUSE'],
+    },
+    {
+      action_oid: 'act-scan',
+      environment_oid: 'env-1',
+      local_id: 'ScanBarcode',
+      version: '1.0.0',
+      visibility: 'opaque',
+      input_parameters: [],
+      output_parameters: [],
+      supported_commands: ['ABORT'],
+    },
+  ],
+  meta: { total: 2 },
+}
+
+describe('ActionTree', () => {
+  it('shows an idle prompt when no connection is active', () => {
+    renderWithProviders(<ActionTree />)
+    expect(screen.getByText(/no active connection/i)).toBeInTheDocument()
+  })
+
+  it('shows a loading state while fetching', async () => {
+    seedConnection()
+    vi.mocked(fetch).mockReturnValueOnce(new Promise(() => {}))
+    renderWithProviders(<ActionTree />)
+    expect(await screen.findByText(/loading/i)).toBeInTheDocument()
+  })
+
+  it('shows an empty state when the active connection reports zero actions', async () => {
+    seedConnection()
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ data: [], meta: { total: 0 } }), { status: 200 })
+    )
+    renderWithProviders(<ActionTree />)
+    await waitFor(() => expect(screen.getByText(/no actions/i)).toBeInTheDocument())
+  })
+
+  it('shows an error state when capabilities fetch fails', async () => {
+    seedConnection()
+    vi.mocked(fetch).mockResolvedValueOnce(new Response('boom', { status: 500 }))
+    renderWithProviders(<ActionTree />)
+    await waitFor(() => expect(screen.getByText(/failed to load actions/i)).toBeInTheDocument())
+  })
+
+  it('groups by visibility with Observable first then Opaque', async () => {
+    seedConnection()
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify(sampleCapabilities), { status: 200 })
+    )
+    renderWithProviders(<ActionTree />)
+    await waitFor(() => expect(screen.getByText('PickItem')).toBeInTheDocument())
+
+    const observableHeading = screen.getByRole('heading', { name: /observable/i })
+    const opaqueHeading = screen.getByRole('heading', { name: /opaque/i })
+    expect(observableHeading.compareDocumentPosition(opaqueHeading)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING
+    )
+  })
+
+  it('click on a row selects the action and highlights it', async () => {
+    const user = userEvent.setup()
+    seedConnection()
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify(sampleCapabilities), { status: 200 })
+    )
+    renderWithProviders(<ActionTree />)
+    await waitFor(() => expect(screen.getByText('PickItem')).toBeInTheDocument())
+    const row = screen.getByTestId('action-row-act-pick')
+    await user.click(row)
+    expect(row.className).toMatch(/active/i)
+  })
+})

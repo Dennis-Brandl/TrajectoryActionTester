@@ -1,0 +1,32 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 1px solid var(--acT-error);
+  background: var(--acT-panel-alt);
+  padding: var(--acT-pad-sm) var(--acT-pad);
+  border-radius: var(--acT-radius);
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--acT-fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--acT-error);
+}
+
+.body {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--acT-mono);
+  font-size: var(--acT-fs-sm);
+  color: var(--acT-text);
+}
