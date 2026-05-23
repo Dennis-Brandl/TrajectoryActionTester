@@ -3,7 +3,7 @@ import { Pill } from '../../components/Pill'
 import { useActiveInstance } from '../../store/active-instance'
 import { useCapabilities } from '../../store/use-capabilities'
 import { useActiveConnection } from '../../store/connections'
-import type { ActionCapability } from '../../api/types'
+import type { ActionCapability, EnvironmentCapability } from '../../api/types'
 import styles from './ActionTree.module.css'
 
 function groupByVisibility(actions: ActionCapability[]): {
@@ -19,39 +19,24 @@ function groupByVisibility(actions: ActionCapability[]): {
   return { observable, opaque }
 }
 
-export function ActionTree() {
-  const connection = useActiveConnection()
-  const capabilities = useCapabilities()
-  const { state, selectAction } = useActiveInstance()
+interface EnvSectionProps {
+  env: EnvironmentCapability
+  selectedActionOid: string | undefined
+  onSelectAction: (oid: string) => void
+}
 
-  const grouped = useMemo(
-    () => groupByVisibility(capabilities.data?.data ?? []),
-    [capabilities.data]
-  )
-
-  if (!connection) {
-    return <p className={styles.message}>No active connection.</p>
-  }
-  if (capabilities.isPending && capabilities.fetchStatus === 'fetching') {
-    return <p className={styles.message}>Loading actions…</p>
-  }
-  if (capabilities.isError) {
-    return <p className={styles.error}>Failed to load actions.</p>
-  }
-  if ((capabilities.data?.data.length ?? 0) === 0) {
-    return <p className={styles.message}>No actions on this container.</p>
-  }
+function EnvSection({ env, selectedActionOid, onSelectAction }: EnvSectionProps) {
+  const grouped = useMemo(() => groupByVisibility(env.actions), [env.actions])
 
   const renderRow = (a: ActionCapability) => {
-    const isActive =
-      state.selection?.type === 'action' && state.selection.action_oid === a.action_oid
+    const isActive = selectedActionOid === a.action_oid
     return (
       <li key={a.action_oid}>
         <button
           type="button"
           data-testid={`action-row-${a.action_oid}`}
           className={[styles.row, isActive ? styles.rowActive : ''].join(' ').trim()}
-          onClick={() => selectAction(a.action_oid)}
+          onClick={() => onSelectAction(a.action_oid)}
         >
           <span className={styles.label}>{a.local_id}</span>
           <Pill variant={a.visibility === 'observable' ? 'accent' : 'muted'}>{a.visibility}</Pill>
@@ -61,7 +46,11 @@ export function ActionTree() {
   }
 
   return (
-    <div className={styles.tree}>
+    <div className={styles.envGroup}>
+      <h3 className={styles.envHeader}>
+        <span>{env.environment_name}</span>
+        <Pill variant="muted">{env.environment_state}</Pill>
+      </h3>
       {grouped.observable.length > 0 && (
         <div className={styles.group}>
           <h4 className={styles.groupHeader}>Observable</h4>
@@ -74,6 +63,44 @@ export function ActionTree() {
           <ul className={styles.list}>{grouped.opaque.map(renderRow)}</ul>
         </div>
       )}
+    </div>
+  )
+}
+
+export function ActionTree() {
+  const connection = useActiveConnection()
+  const capabilities = useCapabilities()
+  const { state, selectAction } = useActiveInstance()
+
+  const environments = capabilities.data?.data.environments ?? []
+  const totalActions = environments.reduce((n, e) => n + e.actions.length, 0)
+
+  const selectedActionOid =
+    state.selection?.type === 'action' ? state.selection.action_oid : undefined
+
+  if (!connection) {
+    return <p className={styles.message}>No active connection.</p>
+  }
+  if (capabilities.isPending && capabilities.fetchStatus === 'fetching') {
+    return <p className={styles.message}>Loading actions…</p>
+  }
+  if (capabilities.isError) {
+    return <p className={styles.error}>Failed to load actions.</p>
+  }
+  if (totalActions === 0) {
+    return <p className={styles.message}>No actions on this container.</p>
+  }
+
+  return (
+    <div className={styles.tree}>
+      {environments.map((env) => (
+        <EnvSection
+          key={env.environment_oid}
+          env={env}
+          selectedActionOid={selectedActionOid}
+          onSelectAction={selectAction}
+        />
+      ))}
     </div>
   )
 }

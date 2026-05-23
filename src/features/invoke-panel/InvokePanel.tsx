@@ -18,10 +18,18 @@ export function InvokePanel() {
   const invoke = useInvoke()
 
   const selection = state.selection
-  const action: ActionCapability | undefined = useMemo(() => {
-    if (selection?.type !== 'action') return undefined
-    return capabilities.data?.data.find((a) => a.action_oid === selection.action_oid)
-  }, [selection, capabilities.data])
+  const actionWithEnv: { action: ActionCapability; environmentOid: string } | undefined =
+    useMemo(() => {
+      if (selection?.type !== 'action') return undefined
+      const envs = capabilities.data?.data.environments ?? []
+      for (const env of envs) {
+        const found = env.actions.find((a) => a.action_oid === selection.action_oid)
+        if (found) return { action: found, environmentOid: env.environment_oid }
+      }
+      return undefined
+    }, [selection, capabilities.data])
+
+  const action = actionWithEnv?.action
 
   const [values, setValues] = useState<Record<string, string>>({})
   const [simMode, setSimMode] = useState(false)
@@ -49,7 +57,7 @@ export function InvokePanel() {
     event.preventDefault()
     invoke.mutate({
       action_oid: action.action_oid,
-      environment_oid: action.environment_oid,
+      environment_oid: actionWithEnv!.environmentOid,
       input_parameters: action.input_parameters.map((p) => ({
         name: p.name,
         value: values[p.name] ?? '',

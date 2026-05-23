@@ -20,10 +20,13 @@ describe('fetchCapabilities', () => {
 
   it('hits {url}/trajectory/v1/capabilities with Accept JSON', async () => {
     vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify({ data: [], meta: { total: 0 } }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      })
+      new Response(
+        JSON.stringify({ data: { environments: [] }, meta: { total_environments: 0, total_actions: 0 } }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
     )
     await fetchCapabilities(baseConnection)
     expect(fetch).toHaveBeenCalledWith(
@@ -34,7 +37,10 @@ describe('fetchCapabilities', () => {
 
   it('strips a trailing slash from the connection URL', async () => {
     vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify({ data: [], meta: { total: 0 } }), { status: 200 })
+      new Response(
+        JSON.stringify({ data: { environments: [] }, meta: { total_environments: 0, total_actions: 0 } }),
+        { status: 200 }
+      )
     )
     await fetchCapabilities({ ...baseConnection, url: 'http://localhost:3000/' })
     expect(fetch).toHaveBeenCalledWith(
@@ -45,7 +51,10 @@ describe('fetchCapabilities', () => {
 
   it('adds Authorization: Bearer when apiKey is present', async () => {
     vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify({ data: [], meta: { total: 0 } }), { status: 200 })
+      new Response(
+        JSON.stringify({ data: { environments: [] }, meta: { total_environments: 0, total_actions: 0 } }),
+        { status: 200 }
+      )
     )
     await fetchCapabilities({ ...baseConnection, apiKey: 'secret-token' })
     expect(fetch).toHaveBeenCalledWith(
@@ -58,19 +67,30 @@ describe('fetchCapabilities', () => {
 
   it('returns the parsed body on 200', async () => {
     const body = {
-      data: [
-        {
-          action_oid: 'act-1',
-          environment_oid: 'env-1',
-          local_id: 'PickItem',
-          version: '1.0.0',
-          visibility: 'observable',
-          input_parameters: [],
-          output_parameters: [],
-          supported_commands: ['PAUSE'],
-        },
-      ],
-      meta: { total: 1 },
+      data: {
+        environments: [
+          {
+            environment_oid: 'env-1',
+            environment_name: 'Warehouse',
+            environment_state: 'Effective',
+            action_properties: [],
+            actions: [
+              {
+                action_oid: 'act-1',
+                action_name: 'PickItem',
+                action_state: 'Effective',
+                local_id: 'PickItem',
+                version: '1.0.0',
+                visibility: 'observable',
+                input_parameters: [],
+                output_parameters: [],
+                supported_commands: ['PAUSE'],
+              },
+            ],
+          },
+        ],
+      },
+      meta: { total_environments: 1, total_actions: 1 },
     }
     vi.mocked(fetch).mockResolvedValueOnce(
       new Response(JSON.stringify(body), { status: 200 })

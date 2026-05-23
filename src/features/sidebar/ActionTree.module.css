@@ -1,7 +1,25 @@
 .tree {
   display: flex;
   flex-direction: column;
+  gap: var(--acT-pad);
+}
+
+.envGroup {
+  display: flex;
+  flex-direction: column;
   gap: var(--acT-pad-sm);
+}
+
+.envHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--acT-pad-sm);
+  font-size: var(--acT-fs-sm);
+  font-weight: 700;
+  color: var(--acT-text);
+  padding: 4px var(--acT-pad-sm);
+  margin: 0;
 }
 
 .message {

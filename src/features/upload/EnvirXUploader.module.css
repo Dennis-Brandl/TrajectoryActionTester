@@ -1,0 +1,40 @@
+.uploader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--acT-pad-sm);
+  padding: var(--acT-pad-sm);
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.labelText {
+  font-size: var(--acT-fs-sm);
+  color: var(--acT-text-subtle);
+}
+
+.fileInput {
+  font-size: var(--acT-fs-sm);
+  color: var(--acT-text);
+}
+
+.fileInput:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  font-size: var(--acT-fs-sm);
+  color: var(--acT-error);
+  margin: 0;
+}
+
+.success {
+  font-size: var(--acT-fs-sm);
+  color: var(--acT-text-muted);
+  margin: 0;
+}

@@ -27,29 +27,41 @@ function seedConnection() {
 }
 
 const sampleCapabilities = {
-  data: [
-    {
-      action_oid: 'act-pick',
-      environment_oid: 'env-1',
-      local_id: 'PickItem',
-      version: '1.0.0',
-      visibility: 'observable',
-      input_parameters: [],
-      output_parameters: [],
-      supported_commands: ['PAUSE'],
-    },
-    {
-      action_oid: 'act-scan',
-      environment_oid: 'env-1',
-      local_id: 'ScanBarcode',
-      version: '1.0.0',
-      visibility: 'opaque',
-      input_parameters: [],
-      output_parameters: [],
-      supported_commands: ['ABORT'],
-    },
-  ],
-  meta: { total: 2 },
+  data: {
+    environments: [
+      {
+        environment_oid: 'env-1',
+        environment_name: 'Warehouse',
+        environment_state: 'Effective',
+        action_properties: [],
+        actions: [
+          {
+            action_oid: 'act-pick',
+            action_name: 'PickItem',
+            action_state: 'Effective',
+            local_id: 'PickItem',
+            version: '1.0.0',
+            visibility: 'observable',
+            input_parameters: [],
+            output_parameters: [],
+            supported_commands: ['PAUSE'],
+          },
+          {
+            action_oid: 'act-scan',
+            action_name: 'ScanBarcode',
+            action_state: 'Effective',
+            local_id: 'ScanBarcode',
+            version: '1.0.0',
+            visibility: 'opaque',
+            input_parameters: [],
+            output_parameters: [],
+            supported_commands: ['ABORT'],
+          },
+        ],
+      },
+    ],
+  },
+  meta: { total_environments: 1, total_actions: 2 },
 }
 
 describe('ActionTree', () => {
@@ -68,7 +80,13 @@ describe('ActionTree', () => {
   it('shows an empty state when the active connection reports zero actions', async () => {
     seedConnection()
     vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify({ data: [], meta: { total: 0 } }), { status: 200 })
+      new Response(
+        JSON.stringify({
+          data: { environments: [] },
+          meta: { total_environments: 0, total_actions: 0 },
+        }),
+        { status: 200 }
+      )
     )
     renderWithProviders(<ActionTree />)
     await waitFor(() => expect(screen.getByText(/no actions/i)).toBeInTheDocument())

@@ -20,19 +20,30 @@ describe('Integration: add a connection and load capabilities', () => {
     vi.mocked(fetch).mockResolvedValueOnce(
       new Response(
         JSON.stringify({
-          data: [
-            {
-              action_oid: 'act-1',
-              environment_oid: 'env-1',
-              local_id: 'PickItem',
-              version: '1.0.0',
-              visibility: 'observable',
-              input_parameters: [],
-              output_parameters: [],
-              supported_commands: ['PAUSE', 'RESUME'],
-            },
-          ],
-          meta: { total: 1 },
+          data: {
+            environments: [
+              {
+                environment_oid: 'env-1',
+                environment_name: 'Warehouse',
+                environment_state: 'Effective',
+                action_properties: [],
+                actions: [
+                  {
+                    action_oid: 'act-1',
+                    action_name: 'PickItem',
+                    action_state: 'Effective',
+                    local_id: 'PickItem',
+                    version: '1.0.0',
+                    visibility: 'observable',
+                    input_parameters: [],
+                    output_parameters: [],
+                    supported_commands: ['PAUSE', 'RESUME'],
+                  },
+                ],
+              },
+            ],
+          },
+          meta: { total_environments: 1, total_actions: 1 },
         }),
         { status: 200 }
       )
@@ -92,20 +103,31 @@ describe('Integration: add a connection and load capabilities', () => {
     vi.mocked(fetch).mockResolvedValueOnce(
       new Response(
         JSON.stringify({
-          data: [
-            {
-              action_oid: 'act-pick',
-              environment_oid: 'env-1',
-              local_id: 'PickItem',
-              version: '1.0.0',
-              description: 'Pick an item',
-              visibility: 'observable',
-              input_parameters: [{ name: 'sku' }],
-              output_parameters: [],
-              supported_commands: ['PAUSE'],
-            },
-          ],
-          meta: { total: 1 },
+          data: {
+            environments: [
+              {
+                environment_oid: 'env-1',
+                environment_name: 'Warehouse',
+                environment_state: 'Effective',
+                action_properties: [],
+                actions: [
+                  {
+                    action_oid: 'act-pick',
+                    action_name: 'PickItem',
+                    action_state: 'Effective',
+                    local_id: 'PickItem',
+                    version: '1.0.0',
+                    description: 'Pick an item',
+                    visibility: 'observable',
+                    input_parameters: [{ name: 'sku' }],
+                    output_parameters: [],
+                    supported_commands: ['PAUSE'],
+                  },
+                ],
+              },
+            ],
+          },
+          meta: { total_environments: 1, total_actions: 1 },
         }),
         { status: 200 }
       )
@@ -192,20 +214,31 @@ describe('integration — invoke → SSE state stream → command', () => {
     vi.mocked(fetch).mockResolvedValueOnce(
       new Response(
         JSON.stringify({
-          data: [
-            {
-              action_oid: 'act-1',
-              environment_oid: 'env-1',
-              local_id: 'PickItem',
-              version: '1.0.0',
-              description: 'Pick an item.',
-              visibility: 'observable',
-              input_parameters: [],
-              output_parameters: [],
-              supported_commands: ['PAUSE', 'RESUME', 'HOLD', 'UNHOLD', 'ABORT', 'STOP', 'CLEAR'],
-            },
-          ],
-          meta: { total: 1 },
+          data: {
+            environments: [
+              {
+                environment_oid: 'env-1',
+                environment_name: 'Warehouse',
+                environment_state: 'Effective',
+                action_properties: [],
+                actions: [
+                  {
+                    action_oid: 'act-1',
+                    action_name: 'PickItem',
+                    action_state: 'Effective',
+                    local_id: 'PickItem',
+                    version: '1.0.0',
+                    description: 'Pick an item.',
+                    visibility: 'observable',
+                    input_parameters: [],
+                    output_parameters: [],
+                    supported_commands: ['PAUSE', 'RESUME', 'HOLD', 'UNHOLD', 'ABORT', 'STOP', 'CLEAR'],
+                  },
+                ],
+              },
+            ],
+          },
+          meta: { total_environments: 1, total_actions: 1 },
         }),
         { status: 200 }
       )
