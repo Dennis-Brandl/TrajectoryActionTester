@@ -32,7 +32,10 @@ describe('useCapabilities', () => {
   })
 
   it('fetches capabilities for the active connection and returns data on success', async () => {
-    const responseBody = { data: [], meta: { total: 0 } }
+    const responseBody = {
+      data: { environments: [] },
+      meta: { total_environments: 0, total_actions: 0 },
+    }
     vi.mocked(fetch).mockResolvedValueOnce(
       new Response(JSON.stringify(responseBody), { status: 200 })
     )
@@ -98,10 +101,16 @@ describe('useCapabilities', () => {
   it('refetches when the active connection URL is updated', async () => {
     vi.mocked(fetch)
       .mockResolvedValueOnce(
-        new Response(JSON.stringify({ data: [], meta: { total: 0 } }), { status: 200 })
+        new Response(
+          JSON.stringify({ data: { environments: [] }, meta: { total_environments: 0, total_actions: 0 } }),
+          { status: 200 }
+        )
       )
       .mockResolvedValueOnce(
-        new Response(JSON.stringify({ data: [], meta: { total: 1 } }), { status: 200 })
+        new Response(
+          JSON.stringify({ data: { environments: [] }, meta: { total_environments: 1, total_actions: 2 } }),
+          { status: 200 }
+        )
       )
 
     const { Wrapper } = makeWrapper()
@@ -116,12 +125,12 @@ describe('useCapabilities', () => {
 
     const connection = result.current.connections.addConnection({ url: 'http://first' })
     await waitFor(() => expect(result.current.capabilities.isSuccess).toBe(true))
-    expect(result.current.capabilities.data?.meta.total).toBe(0)
+    expect(result.current.capabilities.data?.meta.total_environments).toBe(0)
 
     // Edit the URL — should trigger a refetch via the new queryKey.
     result.current.connections.updateConnection(connection.id, { url: 'http://second' })
     await waitFor(() =>
-      expect(result.current.capabilities.data?.meta.total).toBe(1)
+      expect(result.current.capabilities.data?.meta.total_environments).toBe(1)
     )
     expect(fetch).toHaveBeenCalledTimes(2)
     expect(fetch).toHaveBeenLastCalledWith(

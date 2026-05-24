@@ -1,7 +1,10 @@
-import { useState, type ReactNode } from 'react'
+import { useCallback, useState, type ReactNode } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { ActionTree } from './ActionTree'
 import { ConnectionList } from './ConnectionList'
 import { InstanceList } from './InstanceList'
+import { EnvirXUploader } from '../upload/EnvirXUploader'
+import { useActiveConnection } from '../../store/connections'
 import styles from './Sidebar.module.css'
 
 interface SectionProps {
@@ -31,11 +34,23 @@ function Section({ title, defaultOpen = true, children }: SectionProps) {
 }
 
 export function Sidebar() {
+  const connection = useActiveConnection()
+  const queryClient = useQueryClient()
+
+  const handleUploaded = useCallback(() => {
+    void queryClient.invalidateQueries({ queryKey: ['capabilities'] })
+  }, [queryClient])
+
   return (
     <nav className={styles.sidebar} aria-label="Sidebar">
       <Section title="Connections">
         <ConnectionList />
       </Section>
+      {connection && (
+        <Section title="Upload" defaultOpen={false}>
+          <EnvirXUploader serverUri={connection.url} onUploaded={handleUploaded} />
+        </Section>
+      )}
       <Section title="Actions">
         <ActionTree />
       </Section>

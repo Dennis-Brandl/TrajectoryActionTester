@@ -1,0 +1,22 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--acT-pad-sm);
+}
+
+.icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.title {
+  font-size: var(--acT-fs-base);
+  font-weight: 600;
+  color: var(--acT-text);
+}
+
+.version {
+  font-size: var(--acT-fs-sm);
+  color: var(--acT-text-muted);
+}

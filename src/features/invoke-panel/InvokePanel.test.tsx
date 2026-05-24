@@ -8,23 +8,34 @@ import { useActiveInstance } from '../../store/active-instance'
 import { InvokePanel } from './InvokePanel'
 
 const sampleCapabilities = {
-  data: [
-    {
-      action_oid: 'act-pick',
-      environment_oid: 'env-1',
-      local_id: 'PickItem',
-      version: '1.0.0',
-      description: 'Pick an item from a shelf',
-      visibility: 'observable',
-      input_parameters: [
-        { name: 'item_sku' },
-        { name: 'quantity', default_value: '1' },
-      ],
-      output_parameters: [{ name: 'status' }],
-      supported_commands: ['PAUSE'],
-    },
-  ],
-  meta: { total: 1 },
+  data: {
+    environments: [
+      {
+        environment_oid: 'env-1',
+        environment_name: 'Warehouse',
+        environment_state: 'Effective',
+        action_properties: [],
+        actions: [
+          {
+            action_oid: 'act-pick',
+            action_name: 'PickItem',
+            action_state: 'Effective',
+            local_id: 'PickItem',
+            version: '1.0.0',
+            description: 'Pick an item from a shelf',
+            visibility: 'observable',
+            input_parameters: [
+              { name: 'item_sku' },
+              { name: 'quantity', default_value: '1' },
+            ],
+            output_parameters: [{ name: 'status' }],
+            supported_commands: ['PAUSE'],
+          },
+        ],
+      },
+    ],
+  },
+  meta: { total_environments: 1, total_actions: 1 },
 }
 
 function seedConnectionAndSelection() {
@@ -206,19 +217,30 @@ describe('InvokePanel — capability refetch resilience', () => {
     })
 
     const capPayload = JSON.stringify({
-      data: [
-        {
-          action_oid: 'act-1',
-          environment_oid: 'env-1',
-          local_id: 'PickItem',
-          version: '1.0.0',
-          visibility: 'observable',
-          input_parameters: [{ name: 'shelf_location' }],
-          output_parameters: [],
-          supported_commands: [],
-        },
-      ],
-      meta: { total: 1 },
+      data: {
+        environments: [
+          {
+            environment_oid: 'env-1',
+            environment_name: 'Warehouse',
+            environment_state: 'Effective',
+            action_properties: [],
+            actions: [
+              {
+                action_oid: 'act-1',
+                action_name: 'PickItem',
+                action_state: 'Effective',
+                local_id: 'PickItem',
+                version: '1.0.0',
+                visibility: 'observable',
+                input_parameters: [{ name: 'shelf_location' }],
+                output_parameters: [],
+                supported_commands: [],
+              },
+            ],
+          },
+        ],
+      },
+      meta: { total_environments: 1, total_actions: 1 },
     })
 
     // Initial capabilities load

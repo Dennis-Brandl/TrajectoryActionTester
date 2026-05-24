@@ -32,9 +32,14 @@ export function InstancePanel() {
 
   // Look up the action capability — gives us supported_commands.
   const trackedInstance = state.trackedInstances.find((t) => t.instance_id === instanceId)
-  const action = capabilities.data?.data.find(
-    (a) => a.action_oid === trackedInstance?.action_oid
-  )
+  const action = (() => {
+    const envs = capabilities.data?.data.environments ?? []
+    for (const env of envs) {
+      const found = env.actions.find((a) => a.action_oid === trackedInstance?.action_oid)
+      if (found) return found
+    }
+    return undefined
+  })()
 
   return (
     <div className={styles.panel}>

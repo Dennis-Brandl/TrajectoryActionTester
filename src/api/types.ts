@@ -27,7 +27,9 @@ export interface OutputParameterSpec {
 
 export interface ActionCapability {
   action_oid: string
-  environment_oid: string
+  action_name: string
+  action_state: 'Draft' | 'InTest' | 'InReview' | 'Approved' | 'Effective' | 'Superseded' | 'Obsolete'
+  /** Alias of action_name — kept for compat with invoke call sites */
   local_id: string
   version: string
   description?: string
@@ -37,9 +39,27 @@ export interface ActionCapability {
   supported_commands: string[]
 }
 
+export interface ActionPropertyEntry {
+  name: string
+  value: string
+}
+
+export interface EnvironmentCapability {
+  environment_oid: string
+  environment_name: string
+  environment_state: 'Draft' | 'InTest' | 'InReview' | 'Approved' | 'Effective' | 'Superseded' | 'Obsolete'
+  action_properties: Array<{
+    name: string
+    oid?: string
+    description?: string
+    entries: ActionPropertyEntry[]
+  }>
+  actions: ActionCapability[]
+}
+
 export interface CapabilitiesResponse {
-  data: ActionCapability[]
-  meta: { total: number }
+  data: { environments: EnvironmentCapability[] }
+  meta: { total_environments: number; total_actions: number }
 }
 
 export class ApiError extends Error {
