@@ -70,7 +70,6 @@ export function ConnectionBar() {
           ▾
         </span>
       </button>
-      <span className={styles.title}>Trajectory Action Tester</span>
 
       {dropdownOpen && (
         <div className={styles.dropdown} role="menu">

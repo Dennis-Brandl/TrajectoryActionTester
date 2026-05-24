@@ -25,11 +25,6 @@ describe('ConnectionBar', () => {
     expect(dot.className).toMatch(/disconnected|idle/i)
   })
 
-  it('shows the app title in the bar', () => {
-    renderWithProviders(<ConnectionBar />)
-    expect(screen.getByText(/Trajectory Action Tester/i)).toBeInTheDocument()
-  })
-
   it('opens the Add modal from the "+ Add connection" entry in the empty dropdown', async () => {
     const user = userEvent.setup()
     renderWithProviders(<ConnectionBar />)

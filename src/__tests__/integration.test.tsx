@@ -8,6 +8,8 @@ import { createTestQueryClient, renderWithProviders } from '../test-utils'
 describe('Integration: add a connection and load capabilities', () => {
   beforeEach(() => {
     localStorage.clear()
+    // Skip the welcome splash so renderWithProviders(<App />) shows the main shell.
+    localStorage.setItem('trajectory-acT-splash-dismissed', 'true')
     vi.stubGlobal('fetch', vi.fn())
   })
   afterEach(() => {
@@ -201,6 +203,8 @@ describe('Integration: add a connection and load capabilities', () => {
 describe('integration — invoke → SSE state stream → command', () => {
   beforeEach(() => {
     localStorage.clear()
+    // Skip the welcome splash so renderWithProviders(<App />) shows the main shell.
+    localStorage.setItem('trajectory-acT-splash-dismissed', 'true')
     vi.stubGlobal('fetch', vi.fn())
   })
   afterEach(() => {
