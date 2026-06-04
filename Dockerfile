@@ -23,7 +23,7 @@
 # ---------------------------------------------------------------------------
 # Stage 1: Build the single-file app
 # ---------------------------------------------------------------------------
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 
 # Install dependencies (cached unless package files change)

@@ -1,14 +1,12 @@
 # Trajectory Action Tester
 
-Standalone single-file HTML React app for testing any Trajectory Action Container REST implementation.
+A standalone single-file HTML React app for exercising any Trajectory Action Container's REST API — point it at a container, invoke actions, and inspect responses.
 
-## Status
-
-Phase 4-01 scaffold — empty three-pane shell, single-file build pipeline.
+> **PLEASE NOTE:** Trajectory is a demonstration system, not intended for production environments. This tester is a developer tool for exercising an Action Container's REST API.
 
 ## Requirements
 
-- Node 20 or later
+- Node 22 or later
 
 ## Setup
 
@@ -39,6 +37,11 @@ npm test         # vitest run
 npm run lint     # eslint
 ```
 
-## Spec
+## Documentation
 
-`docs/specs/2026-05-11-trajectory-action-tester-v2-design.md` in the Trajectory Action Container monorepo (`C:\TrajectoryActions\`).
+- User guide: [`HELP.md`](./HELP.md)
+- Docker: [`DOCKER-README.md`](./DOCKER-README.md)
+
+## License
+
+Apache-2.0 © 2026 Dennis Brandl. See [`LICENSE`](./LICENSE).
