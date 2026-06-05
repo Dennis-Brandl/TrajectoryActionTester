@@ -6,3 +6,10 @@ dist/
 coverage/
 .env
 .env.local
+
+# --- Public-release hygiene ---
+*.docx
+*.pptx
+
+# Generated at build time (build:help); not tracked
+public/help.html

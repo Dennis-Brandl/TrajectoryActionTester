@@ -2,6 +2,7 @@
   "name": "trajectory-action-tester",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "type": "module",
   "description": "Standalone single-file HTML React app for testing any Trajectory Action Container REST implementation.",
   "scripts": {
@@ -25,6 +26,7 @@
     "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.0.0",
+    "@types/node": "^22.19.19",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
@@ -37,7 +39,6 @@
     "globals": "^17.6.0",
     "jsdom": "^25.0.0",
     "marked": "^18.0.4",
-    "msw": "^2.0.0",
     "prettier": "^3.0.0",
     "typescript": "^5.6.0",
     "typescript-eslint": "^8.0.0",
